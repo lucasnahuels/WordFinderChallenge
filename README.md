@@ -4,6 +4,7 @@ It then creates a WordFinder instance and uses it to find the top 10 most repeat
 The code uses strategies to speed up the search process:
 
 1- Parallel processing to search for words in the matrix. Using multiple CPU cores to search for words in the matrix concurrently.
+https://learn.microsoft.com/es-es/dotnet/standard/parallel-programming/how-to-write-a-simple-parallel-foreach-loop 
 
 2- Use of ConcurrentDictionary: https://resulhsn.medium.com/understanding-of-concurrentdictionary-in-net-3434105ba371 
 
