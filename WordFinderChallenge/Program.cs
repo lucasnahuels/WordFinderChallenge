@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
 var matrix = new[]
 {
-    "ABCD",
-    "EFGH",
-    "IJKL",
-    "MNOP"
+    "ABCDE",
+    "EFGHF",
+    "IJKLG",
+    "MNOPH",
+    "BWBCS"
 };
 
 var wordStream = new[]
@@ -20,7 +22,11 @@ var wordStream = new[]
     "MOP",
     "ABC",
     "FGH",
-    "BFJN"
+    "BFJN",
+    "BFJN",
+    "GKO",
+    "WBC",
+    "HLP"
 };
 
 var wordFinder = new WordFinder(matrix);
@@ -47,27 +53,30 @@ public class WordFinder
 
     public IEnumerable<string> Find(IEnumerable<string> wordStream)
     {
-        var wordCount = new Dictionary<string, int>();
-        var uniqueWords = new HashSet<string>(wordStream);
+        var wordCount = new ConcurrentDictionary<string, int>();
 
-        foreach (var word in uniqueWords)
+        Parallel.ForEach(wordStream, word =>
         {
             if (SearchWord(word))
             {
-                wordCount[word] = 1;
+                wordCount.TryAdd(word, 1);
             }
-        }
+        });
 
-        return wordCount.OrderByDescending(x => x.Value).Take(10).Select(x => x.Key);
+        return wordCount
+            .OrderByDescending(x => x.Value)
+                .Take(10).Select(x => x.Key);
     }
+
 
     private bool SearchWord(string word)
     {
         int len = word.Length;
 
-        for (int i = 0; i < _rows; i++)
+        // Search horizontally
+        for (int i = 0; i < _rows; i++) //i iterates downwards
         {
-            for (int j = 0; j <= _cols - len; j++)
+            for (int j = 0; j <= _cols - len; j++) //j iterates to the right 
             {
                 if (_matrix[i].Substring(j, len) == word)
                 {
@@ -76,12 +85,13 @@ public class WordFinder
             }
         }
 
-        for (int i = 0; i <= _rows - len; i++)
+        // Search vertically. Need to do an extra iteration because .Substring cannot be used
+        for (int i = 0; i <= _rows - len; i++) //i sets the initial position
         {
-            for (int j = 0; j < _cols; j++)
+            for (int j = 0; j < _cols; j++) //j iterates to the right
             {
                 bool found = true;
-                for (int k = 0; k < len; k++)
+                for (int k = 0; k < len; k++) //k iterates from i(initial position) downwards
                 {
                     if (_matrix[i + k][j] != word[k])
                     {
