@@ -15,18 +15,20 @@ var matrix = new[]
 var wordStream = new[]
 {
     "ABCD",
+    "ABCD",
+    "ABCD",
     "EFGH",
     "IJKL",
     "MNOP",
     "PONM",
-    "MOP",
-    "ABC",
-    "FGH",
-    "BFJN",
-    "BFJN",
-    "GKO",
-    "WBC",
-    "HLP"
+    //"MOP",
+    //"ABC",
+    //"FGH",
+    //"BFJN",
+    //"BFJN",
+    //"GKO",
+    //"WBC",
+    //"HLP"
 };
 
 var wordFinder = new WordFinder(matrix);
@@ -59,7 +61,7 @@ public class WordFinder
         {
             if (SearchWord(word))
             {
-                wordCount.TryAdd(word, 1);
+                wordCount.AddOrUpdate(word, 1, (word, count) => count + 1);
             }
         });
 
